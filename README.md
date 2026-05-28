@@ -1,28 +1,27 @@
-# 🚀 Slack Habit Tracker Bot
+# Slack Habit Tracker Bot
 
-A free Slack bot that helps users track daily habits using simple emoji reactions. No paid API keys required!
+A Slack bot for tracking daily habits using slash commands and emoji reactions. No paid API keys required — runs entirely on free-tier infrastructure.
 
-## ✨ Features
+## Features
 
-- **Set Habits**: `/sethabit [habit_name] [times_per_day]` - Create daily habit goals
-- **Track Progress**: `/mystatus` - View your current progress with visual progress bars
-- **Emoji Reactions**: 
-  - ✅ (white_check_mark) - Increment progress
-  - ❌ (x) - Get motivational support
-- **Daily Reset**: Progress automatically resets each day
-- **Local Storage**: All data stored in `habits.json` file
-- **Free Deployment**: Deploy on Railway, Render, or Replit
+- **Set habits**: `/sethabit [habit_name] [times_per_day]` — define a daily habit with a target count
+- **Check progress**: `/mystatus` — view progress for all your habits with visual progress bars
+- **Emoji reactions**:
+  - React with ✅ on a message containing a habit name to increment progress
+  - React with ❌ to receive a motivational nudge
+- **Daily reset**: Progress resets automatically each day based on the current date
+- **Local storage**: All data persisted in a `habits.json` file
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Language**: Python 3.8+
-- **Slack SDK**: `slack-bolt`
+- **Framework**: [Slack Bolt for Python](https://slack.dev/bolt-python/)
+- **Transport**: Socket Mode (no public URL required)
 - **Storage**: Local JSON file
-- **Environment**: `.env` file for secure configuration
 
-## 🚀 Quick Start
+## Setup
 
-### 1. Clone and Setup
+### 1. Install dependencies
 
 ```bash
 git clone <your-repo>
@@ -31,155 +30,155 @@ pip install -r requirements.txt
 cp env.example .env
 ```
 
-### 2. Create Slack App
+### 2. Create a Slack app
 
 1. Go to [api.slack.com/apps](https://api.slack.com/apps)
-2. Click "Create New App" → "From scratch"
-3. Name your app (e.g., "Habit Tracker Bot")
-4. Select your workspace
+2. Click **Create New App** → **From scratch**
+3. Name your app and select your workspace
 
-### 3. Configure Slack App
-
-#### Basic Information
-- Add app icon and description
-- Note your **Signing Secret** (you'll need this)
+### 3. Configure the Slack app
 
 #### OAuth & Permissions
-- Add these **Bot Token Scopes**:
-  - `chat:write` - Send messages
-  - `commands` - Add slash commands
-  - `reactions:read` - Read reactions
-  - `channels:history` - Read channel messages
-  - `im:history` - Read DM messages
-  - `app_mentions:read` - Read mentions
+
+Add the following **Bot Token Scopes**:
+
+| Scope | Purpose |
+|-------|---------|
+| `chat:write` | Send messages |
+| `commands` | Register slash commands |
+| `reactions:read` | Listen to emoji reactions |
+| `channels:history` | Read channel messages |
+| `im:history` | Read direct messages |
+| `app_mentions:read` | Respond to mentions |
 
 #### Slash Commands
-Add these commands:
-- **Command**: `/sethabit`
-  - **Request URL**: `https://your-domain.com/slack/events` (for HTTP mode) or leave empty for Socket Mode
-  - **Short Description**: Set a daily habit goal
-  - **Usage Hint**: `[habit_name] [times_per_day]`
 
-- **Command**: `/mystatus`
-  - **Request URL**: Same as above
-  - **Short Description**: View your habit progress
-  - **Usage Hint**: (leave empty)
+Add these two commands (Request URL can be left empty when using Socket Mode):
+
+| Command | Description | Usage Hint |
+|---------|-------------|------------|
+| `/sethabit` | Set a daily habit goal | `[habit_name] [times_per_day]` |
+| `/mystatus` | View habit progress | — |
 
 #### Event Subscriptions
-- **Request URL**: `https://your-domain.com/slack/events` (for HTTP mode) or leave empty for Socket Mode
-- **Subscribe to bot events**:
-  - `reaction_added`
-  - `app_mention`
-  - `message.im`
+
+Subscribe to the following bot events:
+
+- `reaction_added`
+- `app_mention`
+- `message.im`
 
 #### Socket Mode
-- Enable Socket Mode
-- Generate an **App-Level Token** with `connections:write` scope
-- Note the **App Token** (starts with `xapp-`)
 
-### 4. Install App to Workspace
+1. Enable **Socket Mode** in app settings
+2. Generate an **App-Level Token** with the `connections:write` scope
+3. Save the token — it starts with `xapp-`
 
-1. Go to "Install App" in the sidebar
-2. Click "Install to Workspace"
-3. Note your **Bot User OAuth Token** (starts with `xoxb-`)
+### 4. Install the app to your workspace
 
-### 5. Environment Setup
+1. Go to **Install App** in the sidebar
+2. Click **Install to Workspace**
+3. Copy the **Bot User OAuth Token** — it starts with `xoxb-`
 
-Edit `.env` with your Slack tokens:
+### 5. Configure environment variables
+
+Edit `.env` with your tokens:
+
 ```env
 SLACK_BOT_TOKEN=xoxb-your-bot-token-here
 SLACK_SIGNING_SECRET=your-signing-secret-here
 SLACK_APP_TOKEN=xapp-your-app-token-here
 ```
 
-### 6. Run the Bot
+### 6. Run the bot
 
 ```bash
 python app.py
 ```
 
-You should see: `🚀 Habit Tracker Bot is starting...`
+## Usage
 
-## 📖 Usage
+### Setting habits
 
-### Setting Habits
 ```
 /sethabit drink_water 3
 /sethabit exercise 1
 /sethabit read 30
 ```
 
-### Checking Status
+### Checking status
+
 ```
 /mystatus
 ```
 
-### Tracking Progress
-1. Send a message containing your habit name: "I just drank water!"
-2. React with ✅ to increment progress
-3. React with ❌ for motivation
+Output example:
+```
+drink_water: 2/3 (67%)
+  ████████░░
+```
 
-### Getting Help
+### Tracking progress
+
+1. Send a message mentioning a habit name: `"I just drank water!"`
+2. React with ✅ to increment the count for that habit
+3. React with ❌ for a motivational message
+
+### Getting help
+
 - Mention the bot: `@HabitTracker help`
-- Send a DM to the bot: `help`
+- Send it a direct message: `help`
 
-## 🚀 Deployment
+## Deployment
 
-### Railway (Recommended)
+### Railway (recommended)
 
 1. Fork this repository
-2. Go to [railway.app](https://railway.app)
-3. Connect your GitHub account
-4. Create new project from GitHub repo
-5. Add environment variables in Railway dashboard
-6. Deploy!
+2. Go to [railway.app](https://railway.app) and connect your GitHub account
+3. Create a new project from your forked repo
+4. Add the environment variables in the Railway dashboard
+5. Deploy
 
 ### Render
 
 1. Fork this repository
-2. Go to [render.com](https://render.com)
-3. Create new Web Service
-4. Connect your GitHub repo
-5. Set build command: `pip install -r requirements.txt`
-6. Set start command: `python app.py`
-7. Add environment variables
-8. Deploy!
+2. Go to [render.com](https://render.com) and create a new **Web Service**
+3. Connect your GitHub repo
+4. Set build command: `pip install -r requirements.txt`
+5. Set start command: `python app.py`
+6. Add environment variables and deploy
 
 ### Replit
 
-1. Go to [replit.com](https://replit.com)
-2. Create new Python repl
-3. Upload your files
-4. Add environment variables in Secrets tab
-5. Run the bot
+1. Create a new Python repl at [replit.com](https://replit.com)
+2. Upload your project files
+3. Add environment variables under the **Secrets** tab
+4. Run the bot
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 slack-habit-tracker/
-├── app.py              # Main Slack bot application
-├── habit_tracker.py    # Habit tracking logic
-├── requirements.txt    # Python dependencies
-├── env.example        # Environment variables template
-├── SLACK_SETUP_GUIDE.md # Detailed Slack app setup instructions
-├── habits.json        # User data storage (created automatically)
-└── README.md          # This file
+├── app.py                # Slack bot entry point and event handlers
+├── habit_tracker.py      # Habit tracking logic and data management
+├── requirements.txt      # Python dependencies
+├── env.example           # Environment variable template
+├── SLACK_SETUP_GUIDE.md  # Extended Slack app configuration guide
+└── habits.json           # User data (auto-created on first run)
 ```
 
-## 🔧 Configuration
-
-### Environment Variables
+## Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `SLACK_BOT_TOKEN` | Bot User OAuth Token (xoxb-...) | Yes |
+| `SLACK_BOT_TOKEN` | Bot User OAuth Token (`xoxb-...`) | Yes |
 | `SLACK_SIGNING_SECRET` | App Signing Secret | Yes |
-| `SLACK_APP_TOKEN` | App-Level Token (xapp-...) | Yes |
-| `PORT` | Port for HTTP mode (optional) | No |
+| `SLACK_APP_TOKEN` | App-Level Token (`xapp-...`) | Yes |
+| `PORT` | HTTP port (only needed for HTTP mode) | No |
 
-### Data Storage
+## Data Storage
 
-The bot stores all user data in `habits.json`:
+User habit data is stored in `habits.json`:
 
 ```json
 {
@@ -192,79 +191,40 @@ The bot stores all user data in `habits.json`:
         "created_date": "2024-01-15"
       }
     }
-  },
-  "habits": {}
+  }
 }
 ```
 
-## 🎯 Features in Detail
+## Troubleshooting
 
-### Daily Reset
-Progress automatically resets at midnight based on the user's timezone. The bot compares the current date with the last reset date.
+**Bot not responding to slash commands**
+- Confirm slash commands are configured in your Slack app settings
+- Verify the bot token has all required scopes
+- Check that the app is installed to the workspace
 
-### Progress Bars
-Visual progress bars show completion percentage:
-```
-• drink_water: 2/3 (67%)
-  ████████░░
-```
+**Reactions not tracked**
+- Confirm the `reactions:read` scope is present
+- Ensure the message you reacted to contains a habit name recognized by the bot
 
-### Motivational Messages
-When users react with ❌, they get random motivational messages:
-- "💪 Don't give up! Tomorrow is a new day to crush your goals!"
-- "🌟 Every expert was once a beginner. Keep pushing forward!"
-- "🔥 Progress, not perfection! You're doing great!"
+**Environment variables not loading**
+- Verify the `.env` file exists in the project root
+- Check that variable names match exactly
+- Restart the bot after any changes to `.env`
 
-### Smart Habit Matching
-The bot intelligently matches habit names in messages:
-- Message: "I just exercised!"
-- Habit: "exercise" → Match found!
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **Bot not responding to commands**
-   - Check if slash commands are properly configured
-   - Verify bot token has correct scopes
-   - Ensure app is installed to workspace
-
-2. **Reactions not working**
-   - Verify `reactions:read` scope is added
-   - Check if habit names match exactly
-   - Ensure bot can read channel messages
-
-3. **Environment variables not loading**
-   - Check `.env` file exists and is in correct location
-   - Verify variable names match exactly
-   - Restart the bot after changing environment variables
-
-### Debug Mode
-
-Enable debug logging by modifying `app.py`:
+**Enable debug logging**
 
 ```python
+# In app.py
 logging.basicConfig(level=logging.DEBUG)
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+3. Make your changes and test thoroughly
+4. Open a pull request
 
-## 📄 License
+## License
 
-This project is open source and available under the [MIT License](LICENSE).
-
-## 🙏 Acknowledgments
-
-- Built with [Slack Bolt for Python](https://slack.dev/bolt-python/)
-- Inspired by the need for simple, free habit tracking tools
-- Thanks to the Slack API team for excellent documentation
-
----
-
-**Happy habit tracking! 🎉** 
+MIT License. See [LICENSE](LICENSE) for details.
